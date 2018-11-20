@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.TooltipCompat
+import androidx.cardview.widget.CardView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +32,10 @@ class Adapter : RecyclerView.Adapter<MainViewHolder>() {
   }
 
   override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
+    holder.cardView.clipToOutline = false
   }
 }
 
-class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  val cardView = itemView.findViewById<CardView>(R.id.card)
+}
