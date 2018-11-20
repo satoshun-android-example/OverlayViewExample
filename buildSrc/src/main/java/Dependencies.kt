@@ -10,7 +10,6 @@ object Vers {
 object Libs {
   val android_plugin = "com.android.tools.build:gradle:3.2.1"
   val kotlin_plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Vers.kotlin}"
-  val versions_plugin = "com.github.ben-manes:gradle-versions-plugin:0.20.0"
 
   val kotlin = "org.jetbrains.kotlin:kotlin-stdlib:${Vers.kotlin}"
   val coroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Vers.couroutine}"

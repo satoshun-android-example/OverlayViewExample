@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.TooltipCompat
 import androidx.cardview.widget.CardView
+import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,14 +28,31 @@ class Adapter : RecyclerView.Adapter<MainViewHolder>() {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
     val inflater = LayoutInflater.from(parent.context)
-    return MainViewHolder(inflater.inflate(R.layout.main_item, parent, false))
+    return when (viewType) {
+      0 -> MainViewHolder(inflater.inflate(R.layout.main_item, parent, false))
+      else -> MainViewHolder(inflater.inflate(R.layout.main_item2, parent, false))
+    }
   }
 
   override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-    holder.cardView.clipToOutline = false
+    if (position % 2 == 0) {
+      holder.cardView.clipToOutline = false
+    } else {
+      // todo it's heavy task?
+      holder.target.doOnPreDraw {
+        holder.tooltip.translationX = holder.target.x - 80
+        holder.tooltip.translationY = holder.target.y - 180
+      }
+    }
+  }
+
+  override fun getItemViewType(position: Int): Int {
+    return position % 2
   }
 }
 
 class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-  val cardView = itemView.findViewById<CardView>(R.id.card)
+  val cardView = itemView.findViewById<CardView>(R.id.card)!!
+  val tooltip = itemView.findViewById<View>(R.id.tooltip)!!
+  val target = itemView.findViewById<View>(R.id.subTitle)!!
 }

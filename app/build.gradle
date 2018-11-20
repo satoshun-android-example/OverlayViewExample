@@ -48,6 +48,7 @@ dependencies {
   implementation Libs.constraintlayout
   implementation Libs.recyclerview
   implementation Libs.material
+  implementation Libs.ktx
 
   implementation Libs.coroutine
   implementation Libs.ui_coroutine
