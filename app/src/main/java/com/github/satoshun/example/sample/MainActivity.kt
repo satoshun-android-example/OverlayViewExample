@@ -29,19 +29,18 @@ class Adapter : RecyclerView.Adapter<MainViewHolder>() {
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
     val inflater = LayoutInflater.from(parent.context)
     return when (viewType) {
-      0 -> MainViewHolder(inflater.inflate(R.layout.main_item, parent, false))
+      0 -> MainViewHolder(inflater.inflate(R.layout.main_item2, parent, false))
       else -> MainViewHolder(inflater.inflate(R.layout.main_item2, parent, false))
     }
   }
 
   override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-    if (position % 2 == 0) {
-      holder.cardView.clipToOutline = false
-    } else {
-      // todo it's heavy task?
-      holder.target.doOnPreDraw {
-        holder.tooltip.translationX = holder.target.x - 80
-        holder.tooltip.translationY = holder.target.y - 180
+    // todo it's heavy task?
+    holder.target.doOnPreDraw {
+      holder.tooltip.translationX = it.x + 180
+      holder.tooltip.translationY = it.y - 180
+      if (position == 0) {
+        holder.itemView.elevation = 1f
       }
     }
   }
