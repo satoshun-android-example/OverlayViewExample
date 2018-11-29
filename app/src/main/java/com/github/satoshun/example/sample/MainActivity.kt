@@ -1,9 +1,9 @@
 package com.github.satoshun.example.sample
 
+import android.graphics.Rect
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
@@ -12,18 +12,31 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.satoshun.example.sample.databinding.MainActBinding
 
 class MainActivity : BaseActivity() {
+
+  private lateinit var myAdapter: Adapter
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val binding = DataBindingUtil.setContentView<MainActBinding>(this, R.layout.main_act)
 
+    myAdapter = Adapter()
     with(binding.recycler) {
-      adapter = Adapter()
+      this.adapter = myAdapter
       layoutManager = GridLayoutManager(context, 2)
     }
+
+    binding.recycler.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+      override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+        val delegate = myAdapter.delegate ?: return false
+        return delegate.onTouchEvent(e)
+      }
+    })
   }
 }
 
 class Adapter : RecyclerView.Adapter<MainViewHolder>() {
+  var delegate: TouchDelegate? = null
+
   override fun getItemCount(): Int = 100
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
@@ -36,18 +49,33 @@ class Adapter : RecyclerView.Adapter<MainViewHolder>() {
 
   override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
     // todo it's heavy task?
-    holder.target.doOnPreDraw {
-      holder.tooltip.translationX = it.x + 180
-      holder.tooltip.translationY = it.y - 180
+    holder.target.doOnPreDraw { view ->
+      holder.tooltip.translationX = view.x + 240
+      holder.tooltip.translationY = view.y - 180
+
       if (position == 0) {
-        holder.itemView.elevation = 1f
+        val itemView = holder.itemView
+        itemView.elevation = 1f
+
+        holder.tooltip.setOnClickListener {
+          Toast.makeText(it.context, "clicked tooltip", Toast.LENGTH_SHORT).show()
+        }
+
+        itemView.post {
+          val offsetViewBounds = Rect()
+          holder.tooltip.getHitRect(offsetViewBounds)
+
+          (itemView as ViewGroup).offsetDescendantRectToMyCoords(
+            holder.tooltip,
+            offsetViewBounds
+          )
+          delegate = TouchDelegate(offsetViewBounds, holder.tooltip)
+        }
       }
     }
   }
 
-  override fun getItemViewType(position: Int): Int {
-    return position % 2
-  }
+  override fun getItemViewType(position: Int): Int = position % 2
 }
 
 class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
